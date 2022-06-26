@@ -35,7 +35,7 @@
 (check-expect (count '(((world "foo") hello 3) hello) 'hello) 2)
 
 (define (count sexp sy)
-  (local (; SL Symbol -> N
+  (local (; SL -> N
           ; counts all occurrences of sy in sl
           (define (count-sl sl)
             (cond
@@ -43,7 +43,7 @@
               [else
                (+ (count (first sl) sy) (count-sl (rest sl)))]))
 
-          ; Atom Symbol -> N
+          ; Atom -> N
           ; counts all occurrences of sy in at
           (define (count-atom at)
             (cond
