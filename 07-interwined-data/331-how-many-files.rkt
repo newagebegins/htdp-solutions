@@ -15,13 +15,17 @@
 (define TS-DIR (list TEXT-DIR "read!" LIBS-DIR))
 
 ; Dir.v1 -> N
-; returns the number of files in the given directory
+; returns the number of files in the given directory (recursively)
 (check-expect (how-many '()) 0)
 (check-expect (how-many CODE-DIR) 2)
 (check-expect (how-many DOCS-DIR) 1)
 (check-expect (how-many TEXT-DIR) 3)
-(check-expect (how-many LIBS-DIR) 0)
-(check-expect (how-many TS-DIR) 1)
+(check-expect (how-many LIBS-DIR) 3)
+(check-expect (how-many TS-DIR) 7)
 
-(define (how-many dir)
-  (length (filter string? dir)))
+(define (how-many d)
+  (cond
+    [(empty? d) 0]
+    [(string? (first d)) (add1 (how-many (rest d)))]
+    [else (+ (how-many (first d))
+             (how-many (rest d)))]))
