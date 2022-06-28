@@ -1,6 +1,8 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname |337|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require 2htdp/abstraction)
+
 (define-struct file [name size content])
 
 ; A File is a structure:
@@ -26,12 +28,15 @@
 (define TS-DIR (make-dir "TS" (list TEXT-DIR LIBS-DIR) (list READ2-FILE)))
 
 ; Dir -> N
-; returns the number of files in the given directory
+; returns the number of files in the given directory (recursively)
+(check-expect (how-many  (make-dir "hello" '() '())) 0)
 (check-expect (how-many CODE-DIR) 2)
 (check-expect (how-many DOCS-DIR) 1)
 (check-expect (how-many TEXT-DIR) 3)
-(check-expect (how-many LIBS-DIR) 0)
-(check-expect (how-many TS-DIR) 1)
+(check-expect (how-many LIBS-DIR) 3)
+(check-expect (how-many TS-DIR) 7)
 
 (define (how-many d)
-  (length (dir-files d)))
+  (+ (for/sum ([x (dir-dirs d)])
+       (how-many x))
+     (length (dir-files d))))
