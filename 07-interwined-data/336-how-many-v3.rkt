@@ -34,12 +34,23 @@
 (define TS-DIR (make-dir.v3 "TS" (list TEXT-DIR LIBS-DIR) (list READ2-FILE)))
 
 ; Dir.v3 -> N
-; returns the number of files in the given directory
+; returns the number of files in the given directory (recursively)
+(check-expect (how-many  (make-dir.v3 "hello" '() '())) 0)
 (check-expect (how-many CODE-DIR) 2)
 (check-expect (how-many DOCS-DIR) 1)
 (check-expect (how-many TEXT-DIR) 3)
-(check-expect (how-many LIBS-DIR) 0)
-(check-expect (how-many TS-DIR) 1)
+(check-expect (how-many LIBS-DIR) 3)
+(check-expect (how-many TS-DIR) 7)
 
 (define (how-many d)
-  (length (dir.v3-files d)))
+  (local (; Dir* -> N
+          (define (how-many-dir* d*)
+            (cond
+              [(empty? d*) 0]
+              [else (+ (how-many (first d*))
+                       (how-many-dir* (rest d*)))]))
+          ; File* -> N
+          (define (how-many-file* f*)
+            (length f*)))
+    (+ (how-many-dir* (dir.v3-dirs d))
+       (how-many-file* (dir.v3-files d)))))
