@@ -50,3 +50,37 @@
               (if (false? maybe-path)
                   #false
                   (cons (dir-name d) maybe-path)))])))
+
+; Dir String -> [List-of Path]
+; returns a list of paths to the files named fn in the directory tree d
+(check-expect (find-all CODE-DIR "hang") '(("Code" "hang")))
+(check-expect (find-all CODE-DIR "foo") '())
+(check-expect (find-all TS-DIR "read!") '(("TS" "read!") ("TS" "Libs" "Docs" "read!")))
+(check-expect (find-all TS-DIR "part2") '(("TS" "Text" "part2")))
+(check-expect (find-all TS-DIR "part4") '())
+(check-expect (find-all TS-DIR "draw") '(("TS" "Libs" "Code" "draw")))
+
+(define (find-all d fn)
+  (local (; [List-of Path] -> [List-of Path]
+          (define (prepend-dir-name paths)
+            (map (lambda (p)
+                   (cons (dir-name d) p))
+                 paths))
+
+          ; [List-of File] -> [List-of Path]
+          (define (find-in-files files)
+            (cond
+              [(empty? files) '()]
+              [else (if (string=? (file-name (first files)) fn)
+                        (list (list fn))
+                        (find-in-files (rest files)))]))
+
+          ; [List-of Dir] -> [List-of Path]
+          (define (find-in-dirs dirs)
+            (foldr (lambda (d lop)
+                     (append (find-all d fn) lop))
+                   '()
+                   dirs)))
+
+    (prepend-dir-name (append (find-in-files (dir-files d))
+                              (find-in-dirs (dir-dirs d))))))
