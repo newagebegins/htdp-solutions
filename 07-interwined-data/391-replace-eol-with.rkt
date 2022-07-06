@@ -11,8 +11,6 @@
 
 (define (replace-eol-with front end)
   (cond
-    [(and (empty? front) (empty? end)) '()]
-    [(and (empty? front) (cons? end)) end]
-    [(and (cons? front) (empty? end)) front]
-    [(and (cons? front) (cons? end)) (cons (first front)
-                                           (replace-eol-with (rest front) end))]))
+    [(empty? front) end]
+    [(empty? end) front]
+    [else (cons (first front) (replace-eol-with (rest front) end))]))
