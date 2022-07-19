@@ -5,7 +5,7 @@
 ; places n queens on board; otherwise, returns #false
 (define (place-queens a-board n)
   (cond
-    [(zero? n) a-board]
+    [(zero? n) '()]
     [else
      (local (; [List-of QP] -> [Maybe [List-of QP]]
              (define (try-place spots)
@@ -17,7 +17,7 @@
                                                     (sub1 n))))
                     (if (false? qps)
                         (try-place (rest spots))
-                        qps))])))
+                        (cons (first spots) qps)))])))
        (try-place (find-open-spots a-board)))]))
 
 ; N -> Board
